@@ -5,10 +5,10 @@ Created on Tue Jul 11 11:48:11 2017
 @author: user11
 """
 
-from PyQt5.QtCore import QDir, Qt
+from PyQt5.QtCore import QDir, Qt, QRect, QSize
 from PyQt5.QtGui import QImage, QPainter, QPalette, QPixmap
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
-        QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
+        QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy, QRubberBand)
 from PyQt5.QtPrintSupport import QPrintDialog, QPrinter
 
 
@@ -70,6 +70,22 @@ class ImageViewer(QMainWindow):
         self.imageLabel.setPixmap(self.pixmap)
         self.imageLabel.adjustSize()
 
+    def mousePressEvent (self, eventQMouseEvent):
+        self.originQPoint = eventQMouseEvent.pos()
+        self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
+        self.currentQRubberBand.setGeometry(QRect(self.originQPoint, QSize()))
+        self.currentQRubberBand.show()
+
+    def mouseMoveEvent (self, eventQMouseEvent):
+        self.currentQRubberBand.setGeometry(QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
+
+    def mouseReleaseEvent (self, eventQMouseEvent):
+        self.currentQRubberBand.hide()
+        currentQRect = self.currentQRubberBand.geometry()
+        self.currentQRubberBand.deleteLater()
+        cropPixmap = self.pixmap.copy(currentQRect)
+        self.imageLabel.setPixmap(cropPixmap)
+        self.imageLabel.adjustSize()
 
 #import sys
 #from PyQt4 import QtGui, QtCore
