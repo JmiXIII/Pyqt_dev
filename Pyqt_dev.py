@@ -35,6 +35,8 @@ class ImageViewer(QMainWindow):
                               triggered=self.fit)
         self.ogSizeAct = QAction("&Original size ...",self,shortcut="ctrl+G",
                               triggered=self.ogSize)
+        self.ocrAct = QAction("&OCR...", self, shortcut="Ctrl+O",
+                              triggered=self.ocr)
 
     def createMenus(self):
         self.fileMenu = QMenu("&File", self)
@@ -43,6 +45,7 @@ class ImageViewer(QMainWindow):
         self.editMenu = QMenu("&Edit", self)
         self.editMenu.addAction(self.fitAct)
         self.editMenu.addAction(self.ogSizeAct)
+        self.editMenu.addAction(self.ocrAct)
 
         self.menuBar().addMenu(self.fileMenu)
         self.menuBar().addMenu(self.editMenu)
@@ -70,6 +73,10 @@ class ImageViewer(QMainWindow):
         self.imageLabel.setPixmap(self.pixmap)
         self.imageLabel.adjustSize()
 
+    def ocr(self):
+        self.pixmap.save("test",'jpg')
+        pass
+
     def mousePressEvent (self, eventQMouseEvent):
         self.originQPoint = eventQMouseEvent.pos()
         self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
@@ -84,8 +91,10 @@ class ImageViewer(QMainWindow):
         currentQRect = self.currentQRubberBand.geometry()
         self.currentQRubberBand.deleteLater()
         cropPixmap = self.pixmap.copy(currentQRect)
-        self.imageLabel.setPixmap(cropPixmap)
-        self.imageLabel.adjustSize()
+        cropPixmap.save("temp.jpg",'jpg')
+#        self.imageLabel.setPixmap(cropPixmap)
+#        self.imageLabel.adjustSize()
+#        cropPixmap.save("temp.jpg",'jpg')
 
 #import sys
 #from PyQt4 import QtGui, QtCore
